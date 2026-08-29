@@ -8,18 +8,17 @@ package estructuras;
  *
  * @author maria
  */
-
-public class ListaEstados {
+public class ListaEstadosFinales {
 
     private NodoEstado cabeza;
 
-    public ListaEstados() {
+    public ListaEstadosFinales() {
         cabeza = null;
     }
 
-    public void insertar(String nombre) {
+    public void insertar(NodoEstado estado) {
 
-        NodoEstado nuevo = new NodoEstado(nombre);
+        NodoEstado nuevo = new NodoEstado(estado.nombre);
 
         if (cabeza == null) {
             cabeza = nuevo;
@@ -63,18 +62,4 @@ public class ListaEstados {
 
         return texto;
     }
-    
-    public void llenarCombo(javax.swing.JComboBox<String> combo) {
-
-    combo.removeAllItems();
-
-    NodoEstado actual = cabeza;
-
-    while (actual != null) {
-
-        combo.addItem(actual.nombre);
-
-        actual = actual.siguiente;
-    }
-}
 }
