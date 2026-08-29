@@ -175,7 +175,7 @@ public class CrearDFA extends javax.swing.JFrame {
 
         listaSimbolos.insertar(simbolo);
 
-        txtSimbolo.setText(listaSimbolos.obtenerTexto());
+        txtSimbolos.setText(listaSimbolos.obtenerTexto());
 
         txtSimbolo.setText("");
         txtSimbolo.requestFocus();
