@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package GUI;
 
 import estructuras.ListaEstados;
@@ -10,6 +6,7 @@ import estructuras.ListaEstadosFinales;
 import estructuras.NodoEstado;
 import estructuras.ListaTransiciones;
 import logica.DFA;
+import logica.ValidadorDFA;
 
 /**
  *
@@ -22,6 +19,8 @@ public class CrearDFA extends javax.swing.JFrame {
     private ListaEstadosFinales listaEstadosFinales = new ListaEstadosFinales();
     private ListaTransiciones listaTransiciones = new ListaTransiciones();
     private DFA dfa;
+    private ValidadorDFA validador;
+    private boolean dfaValidado;
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(CrearDFA.class.getName());
 
@@ -31,6 +30,10 @@ public class CrearDFA extends javax.swing.JFrame {
     public CrearDFA() {
         initComponents();
         dfa = new DFA();
+        validador = new ValidadorDFA();
+
+        dfaValidado = false;
+        btnGuardarDFA.setEnabled(false);
     }
 
     /**
@@ -73,6 +76,8 @@ public class CrearDFA extends javax.swing.JFrame {
         btnAgregarTransicion = new javax.swing.JButton();
         jScrollPane4 = new javax.swing.JScrollPane();
         txtTransiciones = new javax.swing.JTextArea();
+        btnGuardarDFA = new javax.swing.JButton();
+        btnValidarDFA = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(900, 900));
@@ -141,6 +146,11 @@ public class CrearDFA extends javax.swing.JFrame {
         txtTransiciones.setRows(5);
         jScrollPane4.setViewportView(txtTransiciones);
 
+        btnGuardarDFA.setText("Crear DFA");
+
+        btnValidarDFA.setText("Validar DFA");
+        btnValidarDFA.addActionListener(this::btnValidarDFAActionPerformed);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -182,13 +192,19 @@ public class CrearDFA extends javax.swing.JFrame {
                                 .addComponent(txtEstadoFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnMarcarFinal))
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(224, 224, 224)
-                                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGap(224, 224, 224)
+                                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(75, 75, 75)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(btnGuardarDFA, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(btnValidarDFA, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(76, 76, 76)
                         .addComponent(btnAgregarTransicion))
@@ -205,7 +221,7 @@ public class CrearDFA extends javax.swing.JFrame {
                             .addComponent(cmbSimbolo, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(cmbOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(cmbDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(308, Short.MAX_VALUE))
+                .addGap(41, 41, 41))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -219,7 +235,7 @@ public class CrearDFA extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addComponent(txtEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnAgregarEstado))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel3)
@@ -244,8 +260,8 @@ public class CrearDFA extends javax.swing.JFrame {
                     .addComponent(btnMarcarFinal))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel9)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -260,7 +276,11 @@ public class CrearDFA extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel12)
                             .addComponent(cmbDestino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(btnValidarDFA, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnGuardarDFA, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnAgregarTransicion)
                 .addGap(147, 147, 147))
@@ -473,6 +493,21 @@ public class CrearDFA extends javax.swing.JFrame {
     );
     }//GEN-LAST:event_btnAgregarTransicionActionPerformed
 
+    private void btnValidarDFAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnValidarDFAActionPerformed
+        String resultado = validador.validar(dfa);
+
+        javax.swing.JOptionPane.showMessageDialog(
+                this,
+                resultado
+        );
+
+        if (resultado.equals("DFA válido.")) {
+
+            dfaValidado = true;
+            btnGuardarDFA.setEnabled(true);
+
+}    }//GEN-LAST:event_btnValidarDFAActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -497,12 +532,18 @@ public class CrearDFA extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new CrearDFA().setVisible(true));
     }
+    
+    public DFA getDFA() {
+    return dfa;
+}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAgregarEstado;
     private javax.swing.JButton btnAgregarSimbolo;
     private javax.swing.JButton btnAgregarTransicion;
+    private javax.swing.JButton btnGuardarDFA;
     private javax.swing.JButton btnMarcarFinal;
+    private javax.swing.JButton btnValidarDFA;
     private javax.swing.JComboBox<String> cmbDestino;
     private javax.swing.JComboBox<String> cmbEstadoInicial;
     private javax.swing.JComboBox<String> cmbOrigen;
