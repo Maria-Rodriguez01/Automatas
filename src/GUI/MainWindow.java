@@ -6,11 +6,43 @@ package GUI;
  */
 
 import logica.DFA;
+import GUI.CrearDFA;
 
 public class MainWindow extends javax.swing.JFrame {
   
     private DFA dfa1;
     private DFA dfa2;
+    
+    public void guardarDFA(DFA nuevoDFA) {
+
+        if (dfa1 == null) {
+
+            dfa1 = nuevoDFA;
+
+            javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "DFA 1 guardado correctamente."
+            );
+
+        } else if (dfa2 == null) {
+
+            dfa2 = nuevoDFA;
+
+            javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "DFA 2 guardado correctamente."
+            );
+
+        } else {
+
+            javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "Ya existen dos DFA guardados."
+            );
+
+            return;
+        }
+    }
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainWindow.class.getName());
 
@@ -33,10 +65,10 @@ public class MainWindow extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
+        btnCrearDFA = new javax.swing.JButton();
+        btnUnionDFA = new javax.swing.JButton();
+        btnProbarCadena = new javax.swing.JButton();
+        btnSalir = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Sistema de DFA");
@@ -44,17 +76,20 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel1.setText("Sistema de DFA");
 
-        jButton1.setText("Crear DFA");
-        jButton1.setToolTipText("");
+        btnCrearDFA.setText("Crear DFA");
+        btnCrearDFA.setToolTipText("");
+        btnCrearDFA.addActionListener(this::btnCrearDFAActionPerformed);
 
-        jButton3.setText("Union DFA");
+        btnUnionDFA.setText("Union DFA");
+        btnUnionDFA.addActionListener(this::btnUnionDFAActionPerformed);
 
-        jButton4.setText("Probar Cadena");
-        jButton4.setToolTipText("");
+        btnProbarCadena.setText("Probar Cadena");
+        btnProbarCadena.setToolTipText("");
+        btnProbarCadena.addActionListener(this::btnProbarCadenaActionPerformed);
 
-        jButton5.setText("Salir");
-        jButton5.setToolTipText("");
-        jButton5.addActionListener(this::jButton5ActionPerformed);
+        btnSalir.setText("Salir");
+        btnSalir.setToolTipText("");
+        btnSalir.addActionListener(this::btnSalirActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -63,11 +98,11 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(133, 133, 133)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnCrearDFA, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnUnionDFA, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnProbarCadena, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnSalir, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(139, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -76,22 +111,48 @@ public class MainWindow extends javax.swing.JFrame {
                 .addGap(16, 16, 16)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnCrearDFA, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(62, 62, 62)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnUnionDFA, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnProbarCadena, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(33, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+    private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton5ActionPerformed
+    }//GEN-LAST:event_btnSalirActionPerformed
+
+    private void btnCrearDFAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearDFAActionPerformed
+        CrearDFA ventana;
+
+        if (dfa1 == null) {
+            ventana = new CrearDFA(this);
+        } else if (dfa2 == null) {
+            ventana = new CrearDFA(this, dfa1);
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "Ya existen dos DFA guardados."
+            );
+            return;
+        }
+
+        ventana.setVisible(true);
+    }//GEN-LAST:event_btnCrearDFAActionPerformed
+
+    private void btnUnionDFAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUnionDFAActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnUnionDFAActionPerformed
+
+    private void btnProbarCadenaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProbarCadenaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnProbarCadenaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -119,10 +180,10 @@ public class MainWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
+    private javax.swing.JButton btnCrearDFA;
+    private javax.swing.JButton btnProbarCadena;
+    private javax.swing.JButton btnSalir;
+    private javax.swing.JButton btnUnionDFA;
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 }

@@ -92,4 +92,47 @@ public class ListaTransiciones {
     public NodoTransicion getCabeza() {
         return cabeza;
     }
+    
+    public boolean existeDuplicada(String origen, String simbolo) {
+
+        NodoTransicion actual = cabeza;
+        boolean encontrada = false;
+
+        while (actual != null) {
+
+            if (actual.origen.equals(origen)
+                    && actual.simbolo.equals(simbolo)) {
+
+                if (encontrada) {
+                    return true;
+                }
+
+                encontrada = true;
+            }
+
+            actual = actual.siguiente;
+        }
+
+        return false;
+    }
+
+    public int contar(String origen, String simbolo) {
+
+        int cantidad = 0;
+
+        NodoTransicion actual = cabeza;
+
+        while (actual != null) {
+
+            if (actual.origen.equals(origen)
+                    && actual.simbolo.equals(simbolo)) {
+
+                cantidad++;
+            }
+
+            actual = actual.siguiente;
+        }
+
+        return cantidad;
+    }
 }

@@ -5,6 +5,7 @@ package logica;
  * @author maria
  */
 import estructuras.NodoEstado;
+import estructuras.NodoSimbolo;
 import estructuras.NodoTransicion;
 
 public class ValidadorDFA {
@@ -82,6 +83,33 @@ public class ValidadorDFA {
             }
 
             actual = actual.getSiguiente();
+        }
+        
+        NodoEstado estadoActual =
+        dfa.getEstados().getCabeza();
+
+        while (estadoActual != null) {
+
+            NodoSimbolo simboloActual
+                    = dfa.getSimbolos().getCabeza();
+
+            while (simboloActual != null) {
+
+                if (!dfa.getTransiciones().existe(
+                        estadoActual.getNombre(),
+                        simboloActual.getSimbolo())) {
+
+                    return "DFA inválido: falta la transición ("
+                            + estadoActual.getNombre()
+                            + ", "
+                            + simboloActual.getSimbolo()
+                            + ").";
+                }
+
+                simboloActual = simboloActual.getSiguiente();
+            }
+
+            estadoActual = estadoActual.getSiguiente();
         }
         
         return "DFA válido.";

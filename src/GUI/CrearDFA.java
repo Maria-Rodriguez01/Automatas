@@ -7,6 +7,7 @@ import estructuras.NodoEstado;
 import estructuras.ListaTransiciones;
 import logica.DFA;
 import logica.ValidadorDFA;
+import estructuras.NodoSimbolo;
 
 /**
  *
@@ -21,21 +22,60 @@ public class CrearDFA extends javax.swing.JFrame {
     private DFA dfa;
     private ValidadorDFA validador;
     private boolean dfaValidado;
+    private MainWindow ventanaPrincipal;
+    
+    private void marcarComoNoValidado() {
+
+        dfaValidado = false;
+        btnGuardarDFA.setEnabled(false);
+    }
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(CrearDFA.class.getName());
 
     /**
      * Creates new form CrearDFA
      */
-    public CrearDFA() {
+    public CrearDFA(MainWindow ventanaPrincipal) {
         initComponents();
+        this.ventanaPrincipal = ventanaPrincipal;
         dfa = new DFA();
         validador = new ValidadorDFA();
 
         dfaValidado = false;
         btnGuardarDFA.setEnabled(false);
     }
+    
+    public CrearDFA(MainWindow ventanaPrincipal, DFA dfaBase) {
 
+        initComponents();
+
+        this.ventanaPrincipal = ventanaPrincipal;
+
+        dfa = new DFA();
+        validador = new ValidadorDFA();
+
+        dfaValidado = false;
+        btnGuardarDFA.setEnabled(false);
+
+        NodoSimbolo actual = dfaBase.getSimbolos().getCabeza();
+
+        while (actual != null) {
+
+            listaSimbolos.insertar(actual.getSimbolo());
+            dfa.agregarSimbolo(actual.getSimbolo());
+
+            actual = actual.getSiguiente();
+        }
+
+        listaSimbolos.llenarCombo(cmbSimbolo);
+
+        txtSimbolos.setText(
+                listaSimbolos.obtenerTexto()
+        );
+
+        btnAgregarSimbolo.setEnabled(false);
+        txtSimbolo.setEnabled(false);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -147,6 +187,7 @@ public class CrearDFA extends javax.swing.JFrame {
         jScrollPane4.setViewportView(txtTransiciones);
 
         btnGuardarDFA.setText("Crear DFA");
+        btnGuardarDFA.addActionListener(this::btnGuardarDFAActionPerformed);
 
         btnValidarDFA.setText("Validar DFA");
         btnValidarDFA.addActionListener(this::btnValidarDFAActionPerformed);
@@ -318,6 +359,8 @@ public class CrearDFA extends javax.swing.JFrame {
         listaEstados.llenarCombo(cmbOrigen);
         listaEstados.llenarCombo(cmbDestino);
 
+        marcarComoNoValidado();
+        
         txtEstado.setText("");
         txtEstado.requestFocus();
     }//GEN-LAST:event_btnAgregarEstadoActionPerformed
@@ -347,6 +390,8 @@ public class CrearDFA extends javax.swing.JFrame {
         txtSimbolos.setText(listaSimbolos.obtenerTexto());
         listaSimbolos.llenarCombo(cmbSimbolo);
 
+        marcarComoNoValidado();
+        
         txtSimbolo.setText("");
         txtSimbolo.requestFocus();
     }//GEN-LAST:event_btnAgregarSimboloActionPerformed
@@ -408,6 +453,8 @@ public class CrearDFA extends javax.swing.JFrame {
         txtEstadosFinales.setText(
                 listaEstadosFinales.obtenerTexto()
         );
+        
+        marcarComoNoValidado();
 
         txtEstadoFinal.setText("");
         txtEstadoFinal.requestFocus();
@@ -491,6 +538,8 @@ public class CrearDFA extends javax.swing.JFrame {
     txtTransiciones.setText(
             listaTransiciones.obtenerTexto()
     );
+    
+    marcarComoNoValidado();
     }//GEN-LAST:event_btnAgregarTransicionActionPerformed
 
     private void btnValidarDFAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnValidarDFAActionPerformed
@@ -507,6 +556,22 @@ public class CrearDFA extends javax.swing.JFrame {
             btnGuardarDFA.setEnabled(true);
 
 }    }//GEN-LAST:event_btnValidarDFAActionPerformed
+
+    private void btnGuardarDFAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarDFAActionPerformed
+         if (!dfaValidado) {
+
+        javax.swing.JOptionPane.showMessageDialog(
+                this,
+                "Debe validar el DFA antes de guardarlo."
+        );
+
+        return;
+    }
+
+    ventanaPrincipal.guardarDFA(dfa);
+
+    dispose();
+    }//GEN-LAST:event_btnGuardarDFAActionPerformed
 
     /**
      * @param args the command line arguments
@@ -530,7 +595,10 @@ public class CrearDFA extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new CrearDFA().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> {
+            MainWindow ventana = new MainWindow();
+            ventana.setVisible(true);
+        });
     }
     
     public DFA getDFA() {

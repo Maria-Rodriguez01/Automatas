@@ -73,4 +73,8 @@ public class ListaSimbolos {
             actual = actual.siguiente;
         }
     }
+    
+    public NodoSimbolo getCabeza() {
+        return cabeza;
+    }
 }
