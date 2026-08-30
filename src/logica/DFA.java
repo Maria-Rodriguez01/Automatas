@@ -8,11 +8,11 @@ package logica;
  *
  * @author maria
  */
-
 import estructuras.ListaEstados;
 import estructuras.ListaSimbolos;
 import estructuras.ListaEstadosFinales;
 import estructuras.ListaTransiciones;
+import estructuras.NodoEstado;
 
 public class DFA {
 
@@ -24,34 +24,71 @@ public class DFA {
 
     public DFA() {
 
-    estados = new ListaEstados();
-    simbolos = new ListaSimbolos();
-    estadoInicial = null;
-    estadosFinales = new ListaEstadosFinales();
-    transiciones = new ListaTransiciones();
-}
-    
+        estados = new ListaEstados();
+        simbolos = new ListaSimbolos();
+        estadoInicial = null;
+        estadosFinales = new ListaEstadosFinales();
+        transiciones = new ListaTransiciones();
+    }
+
     public ListaEstados getEstados() {
-    return estados;
-}
+        return estados;
+    }
 
-public ListaSimbolos getSimbolos() {
-    return simbolos;
-}
+    public ListaSimbolos getSimbolos() {
+        return simbolos;
+    }
 
-public String getEstadoInicial() {
-    return estadoInicial;
-}
+    public String getEstadoInicial() {
+        return estadoInicial;
+    }
 
-public ListaEstadosFinales getEstadosFinales() {
-    return estadosFinales;
-}
+    public ListaEstadosFinales getEstadosFinales() {
+        return estadosFinales;
+    }
 
-public ListaTransiciones getTransiciones() {
-    return transiciones;
-}
+    public ListaTransiciones getTransiciones() {
+        return transiciones;
+    }
 
-public void setEstadoInicial(String estadoInicial) {
-    this.estadoInicial = estadoInicial;
-}
+    public void setEstadoInicial(String estadoInicial) {
+        this.estadoInicial = estadoInicial;
+    }
+
+    public void agregarEstado(String nombre) {
+        estados.insertar(nombre);
+    }
+
+    public void agregarSimbolo(String simbolo) {
+        simbolos.insertar(simbolo);
+    }
+
+    public void agregarEstadoFinal(String nombre) {
+
+        if (estados.existe(nombre) && !estadosFinales.existe(nombre)) {
+
+            NodoEstado actual = estados.getCabeza();
+            while (actual != null) {
+
+                if (actual.getNombre().equals(nombre)) {
+                    estadosFinales.insertar(actual);
+                    break;
+                }
+
+                actual = actual.getSiguiente();
+            }
+        }
+    }
+
+    public void agregarTransicion(
+            String origen,
+            String simbolo,
+            String destino) {
+
+        transiciones.insertar(
+                origen,
+                simbolo,
+                destino
+        );
+    }
 }

@@ -9,6 +9,7 @@ import estructuras.ListaSimbolos;
 import estructuras.ListaEstadosFinales;
 import estructuras.NodoEstado;
 import estructuras.ListaTransiciones;
+import logica.DFA;
 
 /**
  *
@@ -20,6 +21,7 @@ public class CrearDFA extends javax.swing.JFrame {
     private ListaSimbolos listaSimbolos = new ListaSimbolos();
     private ListaEstadosFinales listaEstadosFinales = new ListaEstadosFinales();
     private ListaTransiciones listaTransiciones = new ListaTransiciones();
+    private DFA dfa;
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(CrearDFA.class.getName());
 
@@ -28,6 +30,7 @@ public class CrearDFA extends javax.swing.JFrame {
      */
     public CrearDFA() {
         initComponents();
+        dfa = new DFA();
     }
 
     /**
@@ -287,7 +290,10 @@ public class CrearDFA extends javax.swing.JFrame {
 
         listaEstados.insertar(nombre);
 
+        dfa.agregarEstado(nombre);
+
         txtEstados.setText(listaEstados.obtenerTexto());
+
         listaEstados.llenarCombo(cmbEstadoInicial);
         listaEstados.llenarCombo(cmbOrigen);
         listaEstados.llenarCombo(cmbDestino);
@@ -316,6 +322,7 @@ public class CrearDFA extends javax.swing.JFrame {
         }
 
         listaSimbolos.insertar(simbolo);
+        dfa.agregarSimbolo(simbolo);
 
         txtSimbolos.setText(listaSimbolos.obtenerTexto());
         listaSimbolos.llenarCombo(cmbSimbolo);
@@ -329,7 +336,13 @@ public class CrearDFA extends javax.swing.JFrame {
     }//GEN-LAST:event_txtSimboloActionPerformed
 
     private void cmbEstadoInicialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbEstadoInicialActionPerformed
-        // TODO add your handling code here:
+       if (cmbEstadoInicial.getSelectedItem() != null) {
+
+        String estadoInicial =
+                cmbEstadoInicial.getSelectedItem().toString();
+
+        dfa.setEstadoInicial(estadoInicial);
+    }
     }//GEN-LAST:event_cmbEstadoInicialActionPerformed
 
     private void btnMarcarFinalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMarcarFinalActionPerformed
@@ -365,6 +378,7 @@ public class CrearDFA extends javax.swing.JFrame {
 
             if (actual.getNombre().equals(nombre)) {
                 listaEstadosFinales.insertar(actual);
+                dfa.agregarEstadoFinal(nombre);
                 break;
             }
 
@@ -446,7 +460,13 @@ public class CrearDFA extends javax.swing.JFrame {
             origen,
             simbolo,
             destino
-    );
+        );
+
+    dfa.agregarTransicion(
+            origen,
+            simbolo,
+            destino
+        );
 
     txtTransiciones.setText(
             listaTransiciones.obtenerTexto()
