@@ -63,4 +63,18 @@ public class ListaSimbolos {
 
         return texto;
     }
+    
+    public void llenarCombo(javax.swing.JComboBox<String> combo) {
+
+        combo.removeAllItems();
+
+        NodoSimbolo actual = cabeza;
+
+        while (actual != null) {
+
+            combo.addItem(actual.simbolo);
+
+            actual = actual.siguiente;
+        }
+    }
 }

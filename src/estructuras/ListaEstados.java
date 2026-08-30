@@ -77,4 +77,7 @@ public class ListaEstados {
         actual = actual.siguiente;
     }
 }
+    public NodoEstado getCabeza() {
+    return cabeza;
+}
 }
