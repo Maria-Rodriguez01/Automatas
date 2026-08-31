@@ -7,16 +7,19 @@ package GUI;
 import logica.DFA;
 
 public class ResultadoDFA extends javax.swing.JFrame {
+    private MainWindow menu;
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ResultadoDFA.class.getName());
 
     /**
      * Creates new form ResultadoDFA
      */
-public ResultadoDFA(DFA dfa, String titulo, String demostracion) {
+public ResultadoDFA(MainWindow menu, DFA dfa, String titulo, String demostracion) {
     initComponents();
+    this.menu = menu;
 
     PanelAutomata panel = (PanelAutomata) jPanel1;
+    panel.setTitulo(titulo);
     panel.setDFA(dfa);
     panel.setDemostracion(demostracion);
 }
@@ -89,7 +92,7 @@ public ResultadoDFA(DFA dfa, String titulo, String demostracion) {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
-        new MainWindow().setVisible(true);
+        menu.setVisible(true);
         dispose();
     }//GEN-LAST:event_btnVolverActionPerformed
 
@@ -116,7 +119,7 @@ public ResultadoDFA(DFA dfa, String titulo, String demostracion) {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(
-                () -> new ResultadoDFA(null, "DFA", "").setVisible(true)
+                () -> new ResultadoDFA(null,null, "DFA", "").setVisible(true)
         );
     }
 

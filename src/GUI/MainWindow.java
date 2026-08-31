@@ -180,13 +180,7 @@ public class MainWindow extends javax.swing.JFrame {
             );
             return;
         }
-
-        ResultadoDFA ventana = new ResultadoDFA(
-                dfaUnion,
-                "DFA UNIÓN",
-                union.getDemostracion()
-        );
-
+        ResultadoDFA ventana = new ResultadoDFA(this, dfaUnion, "DFA UNIÓN", union.getDemostracion());
         ventana.setVisible(true);
     }//GEN-LAST:event_btnUnionDFAActionPerformed
     
@@ -198,9 +192,7 @@ public class MainWindow extends javax.swing.JFrame {
             );
             return;
     }
-
-    ProbarCadena ventana =new ProbarCadena(dfa1, dfa2, dfaUnion);
-
+    ProbarCadena ventana =new ProbarCadena( this, dfa1, dfa2, dfaUnion);
     ventana.setVisible(true);
      }//GEN-LAST:event_btnProbarCadenaActionPerformed
 
