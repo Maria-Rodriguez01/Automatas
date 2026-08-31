@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package GUI;
 
 /**
@@ -162,34 +158,31 @@ public class ProbarCadena extends javax.swing.JFrame {
     private void btnProbarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProbarActionPerformed
         String cadena = txtCadena.getText().trim();
 
-        if (cadena.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(
-                    this, "Ingrese una cadena.");
-            return;
-        }
-
         boolean r1 = dfa1 != null && probador.probar(dfa1, cadena);
         boolean r2 = dfa2 != null && probador.probar(dfa2, cadena);
         boolean ru = dfaUnion != null && probador.probar(dfaUnion, cadena);
 
         jTextArea1.setText(
-                "DFA 1: " + (r1 ? "ACEPTADA" : "RECHAZADA") + "\n"
-                + "DFA 2: " + (r2 ? "ACEPTADA" : "RECHAZADA") + "\n"
-                + "UNIÓN: " + (ru ? "ACEPTADA" : "RECHAZADA")
+                "DFA 1: " + (dfa1 == null ? "NO DISPONIBLE" : r1 ? "ACEPTADA" : "RECHAZADA") + "\n"
+                + "DFA 2: " + (dfa2 == null ? "NO DISPONIBLE" : r2 ? "ACEPTADA" : "RECHAZADA") + "\n"
+                + "UNIÓN: " + (dfaUnion == null ? "NO DISPONIBLE" : ru ? "ACEPTADA" : "RECHAZADA")
         );
 
-        DFA seleccionado = dfaUnion;
+        DFA seleccionado = null;
 
         if ("DFA 1".equals(cmbDFA.getSelectedItem())) {
             seleccionado = dfa1;
         } else if ("DFA 2".equals(cmbDFA.getSelectedItem())) {
             seleccionado = dfa2;
+        } else if ("Unión DFA".equals(cmbDFA.getSelectedItem())) {
+            seleccionado = dfaUnion;
         }
 
         if (seleccionado != null)
             jTextArea2.setText(
                     probador.obtenerPasos(seleccionado, cadena)
-            );    }//GEN-LAST:event_btnProbarActionPerformed
+            );
+    }//GEN-LAST:event_btnProbarActionPerformed
 
     /**
      * @param args the command line arguments

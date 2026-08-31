@@ -181,11 +181,11 @@ public class MainWindow extends javax.swing.JFrame {
             return;
         }
 
-        ResultadoDFA ventana
-                = new ResultadoDFA(
-                        dfaUnion,
-                        "DFA UNIÓN"
-                );
+        ResultadoDFA ventana = new ResultadoDFA(
+                dfaUnion,
+                "DFA UNIÓN",
+                union.getDemostracion()
+        );
 
         ventana.setVisible(true);
     }//GEN-LAST:event_btnUnionDFAActionPerformed
