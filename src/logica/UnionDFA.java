@@ -15,229 +15,107 @@ import estructuras.NodoTransicion;
 public class UnionDFA {
 
     public DFA unir(DFA dfa1, DFA dfa2) {
-
-        if (dfa1 == null || dfa2 == null) {
+        if (dfa1 == null || dfa2 == null || !mismoAlfabeto(dfa1, dfa2))
             return null;
+
+        DFA r = new DFA();
+
+        NodoSimbolo s = dfa1.getSimbolos().getCabeza();
+        while (s != null) {
+            r.agregarSimbolo(s.getSimbolo());
+            s = s.getSiguiente();
         }
 
-        if (!mismoAlfabeto(dfa1, dfa2)) {
-            return null;
-        }
+        String inicial = "(" + dfa1.getEstadoInicial() + ","
+                + dfa2.getEstadoInicial() + ")";
 
-        DFA resultado = new DFA();
+        r.agregarEstado(inicial);
+        r.setEstadoInicial(inicial);
 
-        NodoSimbolo simbolo =
-                dfa1.getSimbolos().getCabeza();
+        if (dfa1.getEstadosFinales().existe(dfa1.getEstadoInicial())
+                || dfa2.getEstadosFinales().existe(dfa2.getEstadoInicial()))
+            r.agregarEstadoFinal(inicial);
 
-        while (simbolo != null) {
+        NodoEstado actual = r.getEstados().getCabeza();
 
-            resultado.agregarSimbolo(
-                    simbolo.getSimbolo()
-            );
+        while (actual != null) {
+            String[] partes = separar(actual.getNombre());
 
-            simbolo = simbolo.getSiguiente();
-        }
+            NodoSimbolo simbolo = r.getSimbolos().getCabeza();
 
-        String inicial =
-                crearNombreEstado(
-                        dfa1.getEstadoInicial(),
-                        dfa2.getEstadoInicial()
-                );
+            while (simbolo != null) {
+                String d1 = destino(dfa1, partes[0], simbolo.getSimbolo());
+                String d2 = destino(dfa2, partes[1], simbolo.getSimbolo());
 
-        resultado.agregarEstado(inicial);
-        resultado.setEstadoInicial(inicial);
+                if (d1 != null && d2 != null) {
+                    String nuevo = "(" + d1 + "," + d2 + ")";
 
-        if (dfa1.getEstadosFinales().existe(
-                dfa1.getEstadoInicial())
-                ||
-                dfa2.getEstadosFinales().existe(
-                        dfa2.getEstadoInicial())) {
+                    if (!r.getEstados().existe(nuevo)) {
+                        r.agregarEstado(nuevo);
 
-            resultado.agregarEstadoFinal(inicial);
-        }
-
-        NodoEstado estadoActual =
-                resultado.getEstados().getCabeza();
-
-        while (estadoActual != null) {
-
-            String nombre =
-                    estadoActual.getNombre();
-
-            String[] componentes =
-                    separarEstado(nombre);
-
-            String estadoDFA1 =
-                    componentes[0];
-
-            String estadoDFA2 =
-                    componentes[1];
-
-            NodoSimbolo simboloActual =
-                    resultado.getSimbolos().getCabeza();
-
-            while (simboloActual != null) {
-
-                String simboloTexto =
-                        simboloActual.getSimbolo();
-
-                String destinoDFA1 =
-                        obtenerDestino(
-                                dfa1,
-                                estadoDFA1,
-                                simboloTexto
-                        );
-
-                String destinoDFA2 =
-                        obtenerDestino(
-                                dfa2,
-                                estadoDFA2,
-                                simboloTexto
-                        );
-
-                if (destinoDFA1 != null
-                        && destinoDFA2 != null) {
-
-                    String nuevoEstado =
-                            crearNombreEstado(
-                                    destinoDFA1,
-                                    destinoDFA2
-                            );
-
-                    if (!resultado.getEstados().existe(
-                            nuevoEstado)) {
-
-                        resultado.agregarEstado(
-                                nuevoEstado
-                        );
-
-                        if (dfa1.getEstadosFinales().existe(
-                                destinoDFA1)
-                                ||
-                                dfa2.getEstadosFinales().existe(
-                                        destinoDFA2)) {
-
-                            resultado.agregarEstadoFinal(
-                                    nuevoEstado
-                            );
-                        }
+                        if (dfa1.getEstadosFinales().existe(d1)
+                                || dfa2.getEstadosFinales().existe(d2))
+                            r.agregarEstadoFinal(nuevo);
                     }
 
-                    resultado.agregarTransicion(
-                            nombre,
-                            simboloTexto,
-                            nuevoEstado
-                    );
+                    if (!r.getTransiciones().existe(
+                            actual.getNombre(), simbolo.getSimbolo()))
+                        r.agregarTransicion(
+                                actual.getNombre(),
+                                simbolo.getSimbolo(),
+                                nuevo);
                 }
 
-                simboloActual =
-                        simboloActual.getSiguiente();
+                simbolo = simbolo.getSiguiente();
             }
 
-            estadoActual =
-                    estadoActual.getSiguiente();
+            actual = actual.getSiguiente();
         }
 
-        return resultado;
+        return r;
     }
 
-    private boolean mismoAlfabeto(
-            DFA dfa1,
-            DFA dfa2) {
+    private boolean mismoAlfabeto(DFA dfa1, DFA dfa2) {
+        NodoSimbolo s = dfa1.getSimbolos().getCabeza();
 
-        NodoSimbolo simbolo =
-                dfa1.getSimbolos().getCabeza();
-
-        while (simbolo != null) {
-
-            if (!dfa2.getSimbolos().existe(
-                    simbolo.getSimbolo())) {
-
+        while (s != null) {
+            if (!dfa2.getSimbolos().existe(s.getSimbolo()))
                 return false;
-            }
-
-            simbolo =
-                    simbolo.getSiguiente();
+            s = s.getSiguiente();
         }
 
-        simbolo =
-                dfa2.getSimbolos().getCabeza();
+        s = dfa2.getSimbolos().getCabeza();
 
-        while (simbolo != null) {
-
-            if (!dfa1.getSimbolos().existe(
-                    simbolo.getSimbolo())) {
-
+        while (s != null) {
+            if (!dfa1.getSimbolos().existe(s.getSimbolo()))
                 return false;
-            }
-
-            simbolo =
-                    simbolo.getSiguiente();
+            s = s.getSiguiente();
         }
 
         return true;
     }
 
-    private String crearNombreEstado(
-            String estado1,
-            String estado2) {
+    private String destino(DFA dfa, String origen, String simbolo) {
+        NodoTransicion t = dfa.getTransiciones().getCabeza();
 
-        return "("
-                + estado1
-                + ","
-                + estado2
-                + ")";
-    }
+        while (t != null) {
+            if (t.getOrigen().equals(origen)
+                    && t.getSimbolo().equals(simbolo))
+                return t.getDestino();
 
-    private String[] separarEstado(
-            String nombre) {
-
-        String contenido =
-                nombre.substring(
-                        1,
-                        nombre.length() - 1
-                );
-
-        int coma =
-                contenido.indexOf(",");
-
-        String estado1 =
-                contenido.substring(
-                        0,
-                        coma
-                );
-
-        String estado2 =
-                contenido.substring(
-                        coma + 1
-                );
-
-        return new String[]{
-            estado1,
-            estado2
-        };
-    }
-
-    private String obtenerDestino(
-            DFA dfa,
-            String origen,
-            String simbolo) {
-
-        NodoTransicion actual =
-                dfa.getTransiciones().getCabeza();
-
-        while (actual != null) {
-
-            if (actual.getOrigen().equals(origen)
-                    && actual.getSimbolo().equals(simbolo)) {
-
-                return actual.getDestino();
-            }
-
-            actual =
-                    actual.getSiguiente();
+            t = t.getSiguiente();
         }
 
         return null;
+    }
+
+    private String[] separar(String estado) {
+        String texto = estado.substring(1, estado.length() - 1);
+        int coma = texto.indexOf(",");
+
+        return new String[]{
+            texto.substring(0, coma),
+            texto.substring(coma + 1)
+        };
     }
 }

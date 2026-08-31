@@ -7,6 +7,7 @@ package automatas;
 
 import GUI.MainWindow;
 
+
 public class Automatas {
 
     /**

@@ -13,115 +13,85 @@ import estructuras.NodoTransicion;
 public class ProbadorCadena {
 
     public boolean probar(DFA dfa, String cadena) {
+        if (dfa == null || dfa.getEstadoInicial() == null) return false;
 
-        if (dfa == null) {
-            return false;
-        }
-
-        if (dfa.getEstadoInicial() == null) {
-            return false;
-        }
-
-        String estadoActual =
-                dfa.getEstadoInicial();
+        String estado = dfa.getEstadoInicial();
 
         for (int i = 0; i < cadena.length(); i++) {
+            String simbolo = String.valueOf(cadena.charAt(i));
 
-            String simbolo =
-                    String.valueOf(cadena.charAt(i));
+            if (!dfa.getSimbolos().existe(simbolo)) return false;
 
-            if (!dfa.getSimbolos().existe(simbolo)) {
-                return false;
-            }
+            String siguiente = obtenerDestino(dfa, estado, simbolo);
+            if (siguiente == null) return false;
 
-            String destino =
-                    obtenerDestino(
-                            dfa,
-                            estadoActual,
-                            simbolo
-                    );
-
-            if (destino == null) {
-                return false;
-            }
-
-            estadoActual = destino;
+            estado = siguiente;
         }
 
-        return dfa.getEstadosFinales().existe(
-                estadoActual
-        );
+        return dfa.getEstadosFinales().existe(estado);
     }
 
-    public String obtenerRecorrido(
-            DFA dfa,
-            String cadena) {
+    public String obtenerPasos(DFA dfa, String cadena) {
+        if (dfa == null || dfa.getEstadoInicial() == null) return "";
 
-        if (dfa == null) {
-            return "";
-        }
+        StringBuilder pasos = new StringBuilder();
+        String estado = dfa.getEstadoInicial();
+        String prefijo = "";
 
-        if (dfa.getEstadoInicial() == null) {
-            return "";
-        }
-
-        String estadoActual =
-                dfa.getEstadoInicial();
-
-        String recorrido =
-                estadoActual;
+        pasos.append("δ̂(").append(estado)
+                .append(", ε) = ").append(estado).append("\n\n");
 
         for (int i = 0; i < cadena.length(); i++) {
+            String simbolo = String.valueOf(cadena.charAt(i));
+            String siguiente = obtenerDestino(dfa, estado, simbolo);
 
-            String simbolo =
-                    String.valueOf(cadena.charAt(i));
+            prefijo += simbolo;
 
-            if (!dfa.getSimbolos().existe(simbolo)) {
-                return recorrido;
+            pasos.append("δ̂(").append(dfa.getEstadoInicial())
+                    .append(", ").append(prefijo).append(")\n");
+
+            pasos.append("= δ(δ̂(").append(dfa.getEstadoInicial())
+                    .append(", ");
+
+            if (prefijo.length() == 1)
+                pasos.append("ε");
+            else
+                pasos.append(prefijo.substring(0, prefijo.length() - 1));
+
+            pasos.append("), ").append(simbolo).append(")\n");
+
+            if (siguiente == null) {
+                pasos.append("= transición inexistente\n");
+                return pasos.toString();
             }
 
-            String destino =
-                    obtenerDestino(
-                            dfa,
-                            estadoActual,
-                            simbolo
-                    );
+            pasos.append("= δ(").append(estado)
+                    .append(", ").append(simbolo).append(")\n");
 
-            if (destino == null) {
-                return recorrido;
-            }
+            pasos.append("= ").append(siguiente).append("\n\n");
 
-            recorrido =
-                    recorrido
-                    + " --"
-                    + simbolo
-                    + "--> "
-                    + destino;
-
-            estadoActual = destino;
+            estado = siguiente;
         }
 
-        return recorrido;
+        pasos.append("Estado final: ").append(estado).append("\n");
+
+        if (dfa.getEstadosFinales().existe(estado))
+            pasos.append("Resultado: ACEPTADA");
+        else
+            pasos.append("Resultado: RECHAZADA");
+
+        return pasos.toString();
     }
 
-    private String obtenerDestino(
-            DFA dfa,
-            String origen,
-            String simbolo) {
+    private String obtenerDestino(DFA dfa, String origen, String simbolo) {
+        NodoTransicion t = dfa.getTransiciones().getCabeza();
 
-        NodoTransicion actual =
-                dfa.getTransiciones().getCabeza();
+        while (t != null) {
+            if (t.getOrigen().equals(origen) &&
+                    t.getSimbolo().equals(simbolo))
+                return t.getDestino();
 
-        while (actual != null) {
-
-            if (actual.getOrigen().equals(origen)
-                    && actual.getSimbolo().equals(simbolo)) {
-
-                return actual.getDestino();
-            }
-
-            actual =
-                    actual.getSiguiente();
+            t = t.getSiguiente();
         }
 
         return null;
