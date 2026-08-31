@@ -7,11 +7,15 @@ package GUI;
 
 import logica.DFA;
 import GUI.CrearDFA;
+import logica.UnionDFA;
+import logica.ProbadorCadena;
 
 public class MainWindow extends javax.swing.JFrame {
   
     private DFA dfa1;
     private DFA dfa2;
+    private DFA dfaUnion;
+    private ProbadorCadena probador;
     
     public void guardarDFA(DFA nuevoDFA) {
 
@@ -53,6 +57,9 @@ public class MainWindow extends javax.swing.JFrame {
         initComponents();
         dfa1 = null;
         dfa2 = null;
+        dfaUnion = null;
+        probador = new ProbadorCadena();
+
     }
 
     /**
@@ -147,12 +154,213 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCrearDFAActionPerformed
 
     private void btnUnionDFAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUnionDFAActionPerformed
-        // TODO add your handling code here:
+        if (dfa1 == null) {
+
+            javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "Debe crear y guardar el DFA 1 primero."
+            );
+
+            return;
+        }
+
+        if (dfa2 == null) {
+
+            javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "Debe crear y guardar el DFA 2 primero."
+            );
+
+            return;
+        }
+
+        UnionDFA unionDFA = new UnionDFA();
+
+        DFA resultado
+                = unionDFA.unir(dfa1, dfa2);
+
+        if (resultado == null) {
+
+            javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "No se puede realizar la unión: "
+                    + "los DFA tienen alfabetos diferentes."
+            );
+
+            return;
+        }
+
+        dfaUnion = resultado;
+
+        javax.swing.JOptionPane.showMessageDialog(
+                this,
+                "Unión de DFA creada correctamente."
+        );
     }//GEN-LAST:event_btnUnionDFAActionPerformed
 
+    private boolean probarCadena(DFA dfa, String cadena) {
+
+        if (dfa == null) {
+            return false;
+        }
+
+        String estadoActual
+                = dfa.getEstadoInicial();
+
+        for (int i = 0; i < cadena.length(); i++) {
+
+            String simbolo
+                    = String.valueOf(cadena.charAt(i));
+
+            if (!dfa.getSimbolos().existe(simbolo)) {
+                return false;
+            }
+
+            String siguiente
+                    = null;
+
+            estructuras.NodoTransicion transicion
+                    = dfa.getTransiciones().getCabeza();
+
+            while (transicion != null) {
+
+                if (transicion.getOrigen().equals(estadoActual)
+                        && transicion.getSimbolo().equals(simbolo)) {
+
+                    siguiente
+                            = transicion.getDestino();
+
+                    break;
+                }
+
+                transicion
+                        = transicion.getSiguiente();
+            }
+
+            if (siguiente == null) {
+                return false;
+            }
+
+            estadoActual = siguiente;
+        }
+
+        return dfa.getEstadosFinales().existe(
+                estadoActual
+        );
+    }
+    
     private void btnProbarCadenaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProbarCadenaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnProbarCadenaActionPerformed
+        if (dfa1 == null) {
+
+            javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "Debe crear y guardar el DFA 1 primero."
+            );
+
+            return;
+        }
+
+        String[] opciones;
+
+        if (dfaUnion != null) {
+
+            opciones = new String[]{
+                "DFA 1",
+                "DFA 2",
+                "Unión DFA"
+            };
+
+        } else if (dfa2 != null) {
+
+            opciones = new String[]{
+                "DFA 1",
+                "DFA 2"
+            };
+
+        } else {
+
+            opciones = new String[]{
+                "DFA 1"
+            };
+        }
+
+        String seleccion
+                = (String) javax.swing.JOptionPane.showInputDialog(
+                        this,
+                        "Seleccione el DFA:",
+                        "Probar Cadena",
+                        javax.swing.JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        opciones,
+                        opciones[0]
+                );
+
+        if (seleccion == null) {
+            return;
+        }
+
+        String cadena
+                = javax.swing.JOptionPane.showInputDialog(
+                        this,
+                        "Ingrese la cadena:"
+                );
+
+        if (cadena == null) {
+            return;
+        }
+
+        DFA dfaSeleccionado;
+
+        if (seleccion.equals("DFA 1")) {
+
+            dfaSeleccionado = dfa1;
+
+        } else if (seleccion.equals("DFA 2")) {
+
+            dfaSeleccionado = dfa2;
+
+        } else {
+
+            dfaSeleccionado = dfaUnion;
+        }
+
+        boolean aceptada
+                = probador.probar(
+                        dfaSeleccionado,
+                        cadena
+                );
+
+        String recorrido
+                = probador.obtenerRecorrido(
+                        dfaSeleccionado,
+                        cadena
+                );
+
+        if (aceptada) {
+
+            javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "Cadena: " + cadena
+                    + "\n\n"
+                    + "Recorrido:\n"
+                    + recorrido
+                    + "\n\n"
+                    + "RESULTADO: ACEPTADA"
+            );
+
+        } else {
+
+            javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "Cadena: " + cadena
+                    + "\n\n"
+                    + "Recorrido:\n"
+                    + recorrido
+                    + "\n\n"
+                    + "RESULTADO: RECHAZADA"
+            );
+        }
+     }//GEN-LAST:event_btnProbarCadenaActionPerformed
 
     /**
      * @param args the command line arguments
