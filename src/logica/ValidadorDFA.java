@@ -15,89 +15,93 @@ public class ValidadorDFA {
         if (dfa == null) {
             return "DFA inválido: el DFA no existe.";
         }
-
         if (dfa.getEstados().obtenerTexto().isEmpty()) {
             return "DFA inválido: no se han agregado estados.";
         }
-
         if (dfa.getSimbolos().obtenerTexto().isEmpty()) {
             return "DFA inválido: no se ha definido el alfabeto.";
         }
-
         if (dfa.getEstadoInicial() == null
                 || dfa.getEstadoInicial().isEmpty()) {
-
             return "DFA inválido: no se ha definido el estado inicial.";
         }
-        
-        if (!dfa.getEstados().existe(dfa.getEstadoInicial())) {
-
+        if (!dfa.getEstados().existe(
+                dfa.getEstadoInicial())) {
             return "DFA inválido: el estado inicial '"
                     + dfa.getEstadoInicial()
                     + "' no pertenece al conjunto de estados.";
         }
-
         if (dfa.getEstadosFinales().obtenerTexto().isEmpty()) {
             return "DFA inválido: no se han definido estados finales.";
         }
-        
-        NodoEstado finalActual
-                = dfa.getEstadosFinales().getCabeza();
+
+        NodoEstado finalActual =
+                dfa.getEstadosFinales().getCabeza();
 
         while (finalActual != null) {
 
-            if (!dfa.getEstados().existe(finalActual.getNombre())) {
+            if (!dfa.getEstados().existe(
+                    finalActual.getNombre())) {
 
                 return "DFA inválido: el estado final '"
                         + finalActual.getNombre()
                         + "' no pertenece al conjunto de estados.";
             }
 
-            finalActual = finalActual.getSiguiente();
+            finalActual =
+                    finalActual.getSiguiente();
         }
 
-        NodoTransicion actual =
-        dfa.getTransiciones().getCabeza();
+        NodoTransicion transicionActual =
+                dfa.getTransiciones().getCabeza();
 
-        while (actual != null) {
+        while (transicionActual != null) {
 
-            if (!dfa.getEstados().existe(actual.getOrigen())) {
+            if (!dfa.getEstados().existe(
+                    transicionActual.getOrigen())) {
 
                 return "DFA inválido: el estado origen '"
-                        + actual.getOrigen()
+                        + transicionActual.getOrigen()
                         + "' no pertenece al conjunto de estados.";
             }
-            
-            if (!dfa.getSimbolos().existe(actual.getSimbolo())) {
+
+            if (!dfa.getSimbolos().existe(
+                    transicionActual.getSimbolo())) {
 
                 return "DFA inválido: el símbolo '"
-                        + actual.getSimbolo()
+                        + transicionActual.getSimbolo()
                         + "' no pertenece al alfabeto.";
             }
-            
-            if (!dfa.getEstados().existe(actual.getDestino())) {
+
+            if (!dfa.getEstados().existe(
+                    transicionActual.getDestino())) {
 
                 return "DFA inválido: el estado destino '"
-                        + actual.getDestino()
+                        + transicionActual.getDestino()
                         + "' no pertenece al conjunto de estados.";
             }
 
-            actual = actual.getSiguiente();
+            transicionActual =
+                    transicionActual.getSiguiente();
         }
-        
+
         NodoEstado estadoActual =
-        dfa.getEstados().getCabeza();
+                dfa.getEstados().getCabeza();
 
         while (estadoActual != null) {
 
-            NodoSimbolo simboloActual
-                    = dfa.getSimbolos().getCabeza();
+            NodoSimbolo simboloActual =
+                    dfa.getSimbolos().getCabeza();
 
             while (simboloActual != null) {
 
-                if (!dfa.getTransiciones().existe(
-                        estadoActual.getNombre(),
-                        simboloActual.getSimbolo())) {
+                int cantidad =
+                        dfa.getTransiciones().contar(
+                                estadoActual.getNombre(),
+                                simboloActual.getSimbolo()
+                        );
+
+                if (cantidad == 0) {
 
                     return "DFA inválido: falta la transición ("
                             + estadoActual.getNombre()
@@ -106,12 +110,25 @@ public class ValidadorDFA {
                             + ").";
                 }
 
-                simboloActual = simboloActual.getSiguiente();
+                if (cantidad > 1) {
+
+                    return "DFA inválido: existen "
+                            + cantidad
+                            + " transiciones para ("
+                            + estadoActual.getNombre()
+                            + ", "
+                            + simboloActual.getSimbolo()
+                            + ").";
+                }
+
+                simboloActual =
+                        simboloActual.getSiguiente();
             }
 
-            estadoActual = estadoActual.getSiguiente();
+            estadoActual =
+                    estadoActual.getSiguiente();
         }
-        
+
         return "DFA válido.";
     }
 }
